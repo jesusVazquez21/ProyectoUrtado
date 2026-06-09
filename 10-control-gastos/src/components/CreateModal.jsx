@@ -26,31 +26,39 @@ const CreateModal = ({
   setEditingRecord,
   handleUpdateRecord,
 }) => {
-  const handleSaveClick = () => {
+const handleSaveClick = () => {
+    // 1. INFO: Avisamos que inició el proceso
     console.info("INFO: Verificando datos para guardar el gasto...");
 
     const currentData = editingRecord ? editingRecord : newExpense;
 
+    // 2. ERROR: Verificamos si falta el concepto o si el monto está vacío o es inválido
     if (!currentData.concept || !currentData.amount || currentData.amount <= 0) {
       console.error("ERROR: No se puede guardar. El concepto está vacío o el monto es inválido.");
-      return;
+      return; // El return detiene la ejecución, así no guarda datos incorrectos
     }
 
+    // Si pasa la validación, procedemos a guardar
     if (editingRecord) {
       handleUpdateRecord();
+      // 3. LOG: Éxito al editar
       console.log("LOG: ¡El gasto se actualizó correctamente!");
     } else {
       handleAdd();
+      // 3. LOG: Éxito al crear uno nuevo
       console.log("LOG: ¡Nuevo gasto agregado a la lista exitosamente!");
     }
   };
-
   return (
     <Modal
       title={editingRecord ? "Editar Gasto" : "Agregar Gasto"}
       visible={modalVisible}
-      onOk={handleSaveClick}
+      
+      // CAMBIO AQUÍ: Reemplazamos la lógica anterior por nuestra nueva función
+      onOk={handleSaveClick} 
+      
       onCancel={() => {
+        // También podemos agregar un info si el usuario cancela la acción
         console.info("INFO: El usuario canceló la operación y cerró el modal.");
         setModalVisible(false);
         setEditingRecord(null);
@@ -78,7 +86,7 @@ const CreateModal = ({
           <Input
             value={editingRecord ? editingRecord.concept : newExpense.concept}
             onChange={(e) =>
-              editingRecord
+              setEditingRecord
                 ? setEditingRecord({
                     ...editingRecord,
                     concept: e.target.value,
@@ -92,7 +100,7 @@ const CreateModal = ({
             type="number"
             value={editingRecord ? editingRecord.amount : newExpense.amount}
             onChange={(e) =>
-              editingRecord
+              setEditingRecord
                 ? setEditingRecord({ ...editingRecord, amount: e.target.value })
                 : setNewExpense({ ...newExpense, amount: e.target.value })
             }
