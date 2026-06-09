@@ -26,12 +26,32 @@ const CreateModal = ({
   setEditingRecord,
   handleUpdateRecord,
 }) => {
+  const handleSaveClick = () => {
+    console.info("INFO: Verificando datos para guardar el gasto...");
+
+    const currentData = editingRecord ? editingRecord : newExpense;
+
+    if (!currentData.concept || !currentData.amount || currentData.amount <= 0) {
+      console.error("ERROR: No se puede guardar. El concepto está vacío o el monto es inválido.");
+      return;
+    }
+
+    if (editingRecord) {
+      handleUpdateRecord();
+      console.log("LOG: ¡El gasto se actualizó correctamente!");
+    } else {
+      handleAdd();
+      console.log("LOG: ¡Nuevo gasto agregado a la lista exitosamente!");
+    }
+  };
+
   return (
     <Modal
       title={editingRecord ? "Editar Gasto" : "Agregar Gasto"}
       visible={modalVisible}
-      onOk={editingRecord ? handleUpdateRecord : handleAdd}
+      onOk={handleSaveClick}
       onCancel={() => {
+        console.info("INFO: El usuario canceló la operación y cerró el modal.");
         setModalVisible(false);
         setEditingRecord(null);
       }}
@@ -58,7 +78,7 @@ const CreateModal = ({
           <Input
             value={editingRecord ? editingRecord.concept : newExpense.concept}
             onChange={(e) =>
-              setEditingRecord
+              editingRecord
                 ? setEditingRecord({
                     ...editingRecord,
                     concept: e.target.value,
@@ -72,7 +92,7 @@ const CreateModal = ({
             type="number"
             value={editingRecord ? editingRecord.amount : newExpense.amount}
             onChange={(e) =>
-              setEditingRecord
+              editingRecord
                 ? setEditingRecord({ ...editingRecord, amount: e.target.value })
                 : setNewExpense({ ...newExpense, amount: e.target.value })
             }

@@ -17,9 +17,7 @@ const ControlGastos = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [modalVisible, setModalVisible] = React.useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = React.useState(false);
-  const [editingRecord, setEditingRecord] = React.useState(
-    initializaEmptyExpense
-  );
+  const [editingRecord, setEditingRecord] = React.useState(null);
   const [newExpense, setNewExpense] = React.useState(initializaEmptyExpense);
   const [data, setData] = React.useState(dataApp);
 
@@ -29,6 +27,7 @@ const ControlGastos = () => {
    * @param {type} key - The key of the item to delete
    */
   const handleDelete = (key) => {
+    console.info(`INFO: Se solicitó eliminar el registro con key=${key}`);
     setKeyToDelete(key);
     setDeleteModalVisible(true);
   };
@@ -37,10 +36,15 @@ const ControlGastos = () => {
    * Confirms the deletion of a record and updates the data state.
    */
   const confirmDelete = () => {
-    console.log(keyToDelete);
+    if (!keyToDelete) {
+      console.error("ERROR: No hay clave seleccionada para eliminar.");
+      return;
+    }
+
     setData(data.filter((item) => item.key !== keyToDelete));
     setDeleteModalVisible(false);
     setKeyToDelete(null);
+    console.log("LOG: El registro se eliminó correctamente.");
     message.success("El registro se ha eliminado con éxito");
   };
 
@@ -52,6 +56,7 @@ const ControlGastos = () => {
     setData([...data, { ...newExpense, key: (data.length + 1).toString() }]);
     setModalVisible(false);
     setNewExpense(initializaEmptyExpense);
+    console.log("LOG: Nuevo gasto agregado correctamente.");
     message.success("El registro se ha agregado con éxito");
   };
 
@@ -61,6 +66,7 @@ const ControlGastos = () => {
    * @param {string} key - The key of the item to update
    */
   const handleUpdate = (key) => {
+    console.info(`INFO: Se abrió el modal para editar el registro con key=${key}`);
     setEditingRecord(data.find((item) => item.key === key));
     setModalVisible(true);
   };
@@ -80,6 +86,7 @@ const ControlGastos = () => {
     );
     setModalVisible(false);
     setEditingRecord(null);
+    console.log("LOG: El registro se editó correctamente.");
     message.success("El registro se ha editado con éxito");
   };
 
